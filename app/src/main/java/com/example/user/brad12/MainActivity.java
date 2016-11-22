@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     Bundle data = new Bundle();
                     data.putCharSequence("data", sb);
                     mesg.setData(data);
+                    mesg.what = 0;
                     uiHandler.sendMessage(mesg);
 
 
@@ -100,7 +101,11 @@ public class MainActivity extends AppCompatActivity {
     private class UIHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-
+            switch (msg.what){
+                case 0:
+                    textView.setText(msg.getData().getCharSequence("data"));
+                    break;
+            }
         }
     }
 
