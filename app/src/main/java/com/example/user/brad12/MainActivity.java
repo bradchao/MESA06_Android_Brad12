@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +58,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void test3(View v){
-        
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://www.iii.org.tw/");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.connect();
+                    BufferedReader reader =
+                            new BufferedReader(
+                                    new InputStreamReader(conn.getInputStream()));
+                    String line;
+                    while ( (line = reader.readLine()) != null){
+                        Log.i("brad", line);
+                    }
+                    reader.close();
+
+                } catch (Exception e) {
+                    Log.i("brad", e.toString());
+                }
+
+            }
+        }.start();
     }
 }
