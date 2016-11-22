@@ -18,16 +18,24 @@ public class MainActivity extends AppCompatActivity {
     }
     // UDP Sender
     public void test1(View v){
-        byte[] buf = "Hello, Brad".getBytes();
-        try {
-            DatagramSocket socket = new DatagramSocket();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length,
-                    InetAddress.getByName("10.0.3.2"), 8888);
-            socket.send(packet);
-            socket.close();
-            Log.v("brad", "UDP Send OK");
-        }catch (Exception e){
-            Log.v("brad", e.toString());
-        }
+
+        new Thread(){
+            @Override
+            public void run() {
+                byte[] buf = "Hello, Brad".getBytes();
+                try {
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                            InetAddress.getByName("10.0.3.2"), 8888);
+                    socket.send(packet);
+                    socket.close();
+                    Log.v("brad", "UDP Send OK");
+                }catch (Exception e){
+                    Log.v("brad", e.toString());
+                }
+            }
+        }.start();
+
+
     }
 }
