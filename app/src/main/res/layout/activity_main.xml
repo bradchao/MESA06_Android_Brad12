@@ -8,8 +8,20 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="test1"
+        android:text="UDP Sender"
         android:onClick="test1"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TCP Client"
+        android:onClick="test2"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Http 1"
+        android:onClick="test3"
         />
 
     <TextView
