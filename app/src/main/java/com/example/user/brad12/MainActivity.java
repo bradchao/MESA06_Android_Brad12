@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private UIHandler uiHandler;
     private ImageView imageView;
+    private Bitmap bmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +134,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+    public void test5(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(
+                            "http://4.bp.blogspot.com/-v9_Z2ikPBBY/Uf40h_z720I/AAAAAAAAAUQ/GLsEW1IxIzs/s1600/Android+tutorials.jpg");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.connect();
+
+                    bmp = BitmapFactory.decodeStream(conn.getInputStream());
+                    uiHandler.sendEmptyMessage(2);
+
+                }catch (Exception e){
+                    Log.v("brad", e.toString());
+                }
+            }
+        }.start();
+    }
 
     private class UIHandler extends Handler {
         @Override
@@ -143,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
                     imageView.setImageBitmap((Bitmap)msg.getData().getParcelable("data"));
+                    break;
+                case 2:
+                    imageView.setImageBitmap(bmp);
                     break;
             }
         }
