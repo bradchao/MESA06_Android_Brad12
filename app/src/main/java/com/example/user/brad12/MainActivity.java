@@ -1,9 +1,12 @@
 package com.example.user.brad12;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,11 +19,16 @@ import java.net.Socket;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView textView;
+    private UIHandler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        uiHandler = new UIHandler();
+        textView = (TextView)findViewById(R.id.tv);
     }
     // UDP Sender
     public void test1(View v){
@@ -68,17 +76,33 @@ public class MainActivity extends AppCompatActivity {
                     BufferedReader reader =
                             new BufferedReader(
                                     new InputStreamReader(conn.getInputStream()));
-                    String line;
+                    String line; StringBuilder sb = new StringBuilder();
                     while ( (line = reader.readLine()) != null){
-                        Log.i("brad", line);
+                        sb.append(line + "\n");
                     }
                     reader.close();
 
+                    Message mesg = new Message();
+                    Bundle data = new Bundle();
+                    data.putCharSequence("data", sb);
+                    mesg.setData(data);
+                    uiHandler.sendMessage(mesg);
+
+
                 } catch (Exception e) {
-                    Log.i("brad", e.toString());
+                    Log.v("brad", e.toString());
                 }
 
             }
         }.start();
     }
+
+    private class UIHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+
+        }
+    }
+
+
 }
