@@ -1,11 +1,14 @@
 package com.example.user.brad12;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -21,6 +24,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private UIHandler uiHandler;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         uiHandler = new UIHandler();
         textView = (TextView)findViewById(R.id.tv);
+        imageView = (ImageView)findViewById(R.id.img);
     }
     // UDP Sender
     public void test1(View v){
@@ -98,12 +103,46 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+    public void test4(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(
+                            "http://images.techhive.com/images/article/2016/09/android-old-habits-100682662-primary.idge.jpg");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.connect();
+
+                    Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream());
+
+                    Message mesg = new Message();
+                    Bundle data = new Bundle();
+                    data.putParcelable("data", bmp);
+                    mesg.setData(data);
+                    mesg.what = 1;
+                    uiHandler.sendMessage(mesg);
+
+                    //imageView.setImageBitmap(bmp);
+
+
+
+
+                }catch (Exception e){
+                    Log.v("brad", e.toString());
+                }
+            }
+        }.start();
+    }
+
     private class UIHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
                     textView.setText(msg.getData().getCharSequence("data"));
+                    break;
+                case 1:
+                    imageView.setImageBitmap((Bitmap)msg.getData().getParcelable("data"));
                     break;
             }
         }
