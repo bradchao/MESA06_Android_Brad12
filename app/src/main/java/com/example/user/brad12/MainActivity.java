@@ -254,6 +254,16 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
+                try {
+                    MultipartUtility mu = new MultipartUtility("http://10.0.2.2/add2.php", "UTF-8");
+                    mu.addFormField("account", "mary");
+                    mu.addFormField("passwd", "654321");
+                    mu.addFilePart("upload", new File(sdroot, "brad.pdf"));
+                    List<String> ret =  mu.finish();
+                    Log.v("brad", ret.get(0));
+                }catch (Exception e){
+                    Log.v("brad", e.toString());
+                }
             }
         }.start();
     }
