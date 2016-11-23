@@ -172,6 +172,24 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+    // Download save to SDCard
+    public void test7(View v){
+        new Thread(){
+            @Override
+            public void run() {
+            }
+        }.start();
+    }
+
+    // Upload to My Server => add2.php
+    public void test8(View v){
+        new Thread(){
+            @Override
+            public void run() {
+            }
+        }.start();
+    }
+
 
     private class UIHandler extends Handler {
         @Override
