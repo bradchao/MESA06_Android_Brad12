@@ -1,9 +1,14 @@
 package com.example.user.brad12;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private UIHandler uiHandler;
     private ImageView imageView;
     private Bitmap bmp;
+    private String urlDownload = "http://www.iii.org.tw";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +42,32 @@ public class MainActivity extends AppCompatActivity {
         uiHandler = new UIHandler();
         textView = (TextView)findViewById(R.id.tv);
         imageView = (ImageView)findViewById(R.id.img);
+
+        // 1. 權限
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            // request permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0);
+        }
+
+        // 2. 環境
+        init();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        init();
+    }
+
+    private void init(){
+
+    }
+
     // UDP Sender
     public void test1(View v){
 
@@ -177,6 +208,17 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
+                try {
+                    URL url = new URL("http://pdfmyurl.com/?url=" + urlDownload);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.connect();
+
+                    conn.getInputStream();
+
+                }catch (Exception e){
+
+                }
+
             }
         }.start();
     }
