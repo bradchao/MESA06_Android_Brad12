@@ -1,9 +1,11 @@
 package com.example.user.brad12;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -17,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -33,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private Bitmap bmp;
     private String urlDownload = "http://www.iii.org.tw";
+
+    private File sdroot;
+
+    private ProgressDialog pDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +75,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
+        sdroot = Environment.getExternalStorageDirectory();
 
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Download...");
+        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
 
     // UDP Sender
@@ -205,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Download save to SDCard
     public void test7(View v){
+        pDialog.show();
         new Thread(){
             @Override
             public void run() {
@@ -213,10 +228,21 @@ public class MainActivity extends AppCompatActivity {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.connect();
 
-                    conn.getInputStream();
+                    InputStream in = conn.getInputStream();
 
+                    File download = new File(sdroot, "brad.pdf");
+                    FileOutputStream fout = new FileOutputStream(download);
+                    byte[] buf = new byte[4096]; int len;
+                    while ( (len = in.read(buf)) != -1){
+                        fout.write(buf,0,len);
+                    }
+                    fout.flush();
+                    fout.close();
+                    Log.v("brad", "Download OK");
+                    uiHandler.sendEmptyMessage(3);
                 }catch (Exception e){
-
+                    Log.v("brad", "Download :" + e.toString());
+                    uiHandler.sendEmptyMessage(3);
                 }
 
             }
@@ -245,6 +271,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 2:
                     imageView.setImageBitmap(bmp);
+                    break;
+                case 3:
+                    pDialog.dismiss();
                     break;
             }
         }
